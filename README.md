@@ -84,6 +84,7 @@ miles-agent/
 Before you begin, ensure you have:
 - **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
 - **agents-cli**: Agents CLI - Install with `uv tool install google-agents-cli`
+- **Docker**: Optional, for containerized local testing
 - **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
 
 ## Quick Start
@@ -137,6 +138,29 @@ You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`
 If the playground returns `503 UNAVAILABLE`, the Gemini endpoint is under
 temporary high demand. Wait a minute and retry, or set `MILES_MODEL` in `.env`
 to another available Gemini model.
+
+## Docker Local Test
+
+Build the container:
+
+```bash
+docker build -t miles-agent .
+```
+
+Run the API locally:
+
+```bash
+docker run --rm --env-file .env -p 8080:8080 miles-agent
+```
+
+Check that the service is running:
+
+```bash
+curl http://localhost:8080/healthz
+```
+
+The health check does not call Gemini. Agent interactions still require a local
+`.env` with `GOOGLE_API_KEY` or valid Google Cloud credentials.
 
 ## Demo Prompts
 
