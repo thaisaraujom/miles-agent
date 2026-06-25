@@ -42,7 +42,7 @@ def _print_safety_demo() -> None:
     print("\nScenario 3 - Safety guardrail")
     print("Input: user shares a password and asks to sell miles.")
     result = screen_sensitive_data(
-        "Minha senha do LATAM Pass e abc123. Quero vender milhas."
+        "My LATAM Pass password is abc123. I want to sell miles."
     )
     print(f"Safe to process: {result['is_safe']}")
     print(f"Sensitive matches: {', '.join(result['sensitive_matches'])}")

@@ -6,7 +6,7 @@ from typing import Any
 DATA_DIR = Path(__file__).parent / "data"
 TARGET_VALUE_CENTS_PER_MILE = 2.2
 SENSITIVE_PATTERNS = {
-    "password": re.compile(r"\b(password|senha|passcode|2fa|token|codigo)\b", re.I),
+    "password": re.compile(r"\b(password|passcode|2fa|token|code)\b", re.I),
     "cpf": re.compile(r"\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b"),
     "card": re.compile(r"\b(?:\d[ -]*?){13,16}\b"),
 }
@@ -193,11 +193,11 @@ def screen_sensitive_data(user_text: str) -> dict[str, Any]:
         if pattern.search(user_text or "")
     ]
     unsafe_terms = [
-        "vender milhas",
-        "comprar conta",
-        "emprestar conta",
-        "compartilhar senha",
-        "burlar",
+        "sell miles",
+        "buy account",
+        "borrow account",
+        "share password",
+        "bypass",
     ]
     unsafe_matches = [
         term for term in unsafe_terms if term in (user_text or "").lower()

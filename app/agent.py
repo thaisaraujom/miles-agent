@@ -141,7 +141,7 @@ def _build_tools() -> list:
 
 
 root_agent = Agent(
-    name="milhas_claras_coordinator",
+    name="miles_agent_coordinator",
     model=MODEL,
     description="Coordinates mileage-transfer and cash-versus-miles decisions.",
     instruction=f"""

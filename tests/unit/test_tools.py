@@ -41,9 +41,9 @@ def test_score_transfer_decision_waits_when_miles_value_is_low() -> None:
 
 
 def test_screen_sensitive_data_blocks_credentials() -> None:
-    result = screen_sensitive_data("minha senha e abc123 e quero vender milhas")
+    result = screen_sensitive_data("my password is abc123 and I want to sell miles")
 
     assert result["status"] == "success"
     assert result["is_safe"] is False
     assert "password" in result["sensitive_matches"]
-    assert "vender milhas" in result["unsafe_matches"]
+    assert "sell miles" in result["unsafe_matches"]

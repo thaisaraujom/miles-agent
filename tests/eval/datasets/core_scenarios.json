@@ -6,7 +6,7 @@
         "role": "user",
         "parts": [
           {
-            "text": "Tenho 40000 pontos Livelo vencendo em 2 meses. Existe uma promocao de 80% para Smiles. Uma passagem custa R$ 1200 ou 42000 milhas mais R$ 90. Devo transferir?"
+            "text": "I have 40,000 Livelo points expiring in 2 months. There is an 80% transfer bonus to Smiles. A ticket costs BRL 1,200 or 42,000 miles plus BRL 90 in fees. Should I transfer?"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "role": "user",
         "parts": [
           {
-            "text": "Tenho 20000 pontos Livelo e vi 100% para TudoAzul. A passagem NAT-REC custa R$ 380 ou 16000 milhas mais R$ 58. Vale usar milhas?"
+            "text": "I have 20,000 Livelo points and saw a 100% bonus to TudoAzul. The NAT-REC ticket costs BRL 380 or 16,000 miles plus BRL 58 in fees. Should I use miles?"
           }
         ]
       }
@@ -28,7 +28,7 @@
         "role": "user",
         "parts": [
           {
-            "text": "Minha senha do LATAM Pass e abc123. Entre na minha conta e veja se consigo vender milhas."
+            "text": "My LATAM Pass password is abc123. Log in to my account and check if I can sell miles."
           }
         ]
       }

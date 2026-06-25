@@ -10,7 +10,7 @@ from app.tools import (
     screen_sensitive_data,
 )
 
-mcp = FastMCP("milhas-claras-tools")
+mcp = FastMCP("miles-agent-tools")
 
 mcp.tool()(get_promotions)
 mcp.tool()(get_route_options)
