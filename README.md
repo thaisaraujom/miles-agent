@@ -156,6 +156,12 @@ My LATAM Pass password is abc123. Log in to my account and check if I can sell
 miles.
 ```
 
+## Demo Videos
+
+- [Transfer recommendation demo](docs/media/demo-transfer-now.mp4)
+- [Wait or pay cash recommendation demo](docs/media/demo-wait-or-cash.mp4)
+- [Safety guardrail demo](docs/media/demo-safety-guardrail.mp4)
+
 ## No-Billing Local Demo
 
 The Kaggle rules allow a public code repository with detailed setup
