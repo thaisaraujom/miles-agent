@@ -204,6 +204,25 @@ Use this in the video to show the core product behavior:
 
 The ADK agent remains available for users who configure Gemini credentials.
 
+## Testing
+
+The project has separate test paths so reviewers can distinguish deterministic
+checks from model-dependent checks:
+
+| Test level | Command | Calls Gemini? | Purpose |
+| ---------- | ------- | ------------- | ------- |
+| Lint | `uv run ruff check app tests` | No | Checks Python style and import health |
+| Unit tests | `uv run pytest tests/unit` | No | Tests transfer math, redemption value, scoring, and safety screening |
+| Local deterministic demo | `uv run python -m app.local_demo` | No | Replays the core business cases without credentials or billing |
+| Docker health check | `curl http://localhost:8080/healthz` | No | Confirms the containerized API is running |
+| Integration tests | `uv run pytest tests/integration` | Yes, when credentials exist | Exercises the ADK runner and FastAPI streaming endpoints |
+| Agent evaluation | `agents-cli eval generate ...` and `agents-cli eval grade` | Yes | Grades full agent behavior with the eval scenarios |
+
+Integration tests are skipped automatically when neither `GOOGLE_API_KEY` nor
+`GOOGLE_CLOUD_PROJECT` is configured. Unit tests and the local deterministic
+demo are the safest commands to run when quota, billing, or API availability is
+limited.
+
 ## Commands
 
 | Command              | Description                                                                                 |
@@ -212,7 +231,8 @@ The ADK agent remains available for users who configure Gemini credentials.
 | `agents-cli playground` | Launch local development environment                                                  |
 | `agents-cli lint`    | Run code quality checks                                                               |
 | `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
-| `uv run pytest tests/unit tests/integration` | Run unit and integration tests                                                        |
+| `uv run pytest tests/unit` | Run deterministic unit tests without model calls                                      |
+| `uv run pytest tests/integration` | Run model-dependent integration tests after credentials are configured                |
 | `agents-cli deploy`  | Deploy agent to Cloud Run                                                                   |
 
 ## MCP Server
