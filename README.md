@@ -101,7 +101,16 @@ Install required packages:
 agents-cli install
 ```
 
-For local LLM execution, configure one of the following:
+### Credentials
+
+For local LLM execution, configure one of the following credential paths:
+
+- Create or view a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
+- Read Google's official [Gemini API key guide](https://ai.google.dev/gemini-api/docs/api-key).
+- Create or find a Google Cloud project in the [Google Cloud Console](https://console.cloud.google.com/projectcreate) or follow the official [project creation docs](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+- If using Google Cloud credentials instead of an API key, follow the official [Application Default Credentials setup](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+Do not commit `.env`, API keys, passwords, or loyalty account credentials.
 
 ```bash
 export GOOGLE_API_KEY=<your-ai-studio-key>
