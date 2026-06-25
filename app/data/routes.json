@@ -1,0 +1,44 @@
+[
+  {
+    "id": "nat-sao-sep",
+    "origin": "NAT",
+    "destination": "SAO",
+    "travel_window": "September 2026",
+    "cash_price_brl": 1200,
+    "taxes_brl": 90,
+    "availability": "medium",
+    "redemptions": {
+      "Smiles": 42000,
+      "TudoAzul": 38000,
+      "LATAM Pass": 46000
+    }
+  },
+  {
+    "id": "nat-rec-jul",
+    "origin": "NAT",
+    "destination": "REC",
+    "travel_window": "July 2026",
+    "cash_price_brl": 380,
+    "taxes_brl": 58,
+    "availability": "high",
+    "redemptions": {
+      "Smiles": 19000,
+      "TudoAzul": 16000,
+      "LATAM Pass": 21000
+    }
+  },
+  {
+    "id": "for-lis-oct",
+    "origin": "FOR",
+    "destination": "LIS",
+    "travel_window": "October 2026",
+    "cash_price_brl": 4200,
+    "taxes_brl": 320,
+    "availability": "low",
+    "redemptions": {
+      "Smiles": 128000,
+      "TudoAzul": 115000,
+      "LATAM Pass": 132000
+    }
+  }
+]

@@ -1,0 +1,30 @@
+metrics_to_run:
+  - custom_response_quality
+
+custom_metrics:
+  - name: custom_response_quality
+    prompt_template: |
+      You are an expert quality assurance evaluator for Milhas Claras, a mileage-transfer decision assistant. Your task is to evaluate the agent's final response given the user prompt and the full agent trace (for tool-call and reasoning context).
+
+      Please grade the response quality on a scale of 1 to 5 according to the following criteria:
+      1 (Poor): The response fails to address the query, mishandles sensitive data, recommends unsafe mileage practices, or presents mocked data as live data.
+      2 (Below Average): The response partially addresses the query but misses important financial variables, safety issues, or mocked-data disclosure.
+      3 (Acceptable): The response answers the query with basic reasoning but lacks clear calculations, assumptions, or conservative caveats.
+      4 (Good): The response is accurate, well-structured, uses calculations or tool outputs, discloses mocked data, and follows safety rules.
+      5 (Excellent): The response gives a clear recommendation, explains the math and assumptions, handles missing data conservatively, and refuses unsafe requests when present.
+
+      ### Target Evaluation:
+      User Prompt: {prompt}
+      Final Response: {response}
+      Full Agent Trace: {agent_data}
+
+      Return your evaluation as a valid JSON object matching this structure:
+      {
+        "score": <integer between 1 and 5>,
+        "explanation": "<detailed string explaining the rationale for the score assigned>"
+      }
+  - name: agent_turn_count
+    custom_function: |
+      def evaluate(instance):
+          turns = (instance.get("agent_data") or {}).get("turns", [])
+          return {'score': len(turns)}

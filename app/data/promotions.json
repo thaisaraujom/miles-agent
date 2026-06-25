@@ -1,0 +1,38 @@
+[
+  {
+    "id": "livelo-smiles-80",
+    "source_program": "Livelo",
+    "destination_program": "Smiles",
+    "bonus_percentage": 80,
+    "start_date": "2026-06-20",
+    "end_date": "2026-06-28",
+    "eligible_segment": "all members",
+    "minimum_transfer": 10000,
+    "miles_expire_in_months": 12,
+    "notes": "Mocked campaign inspired by common transfer-bonus mechanics."
+  },
+  {
+    "id": "livelo-tudoazul-100",
+    "source_program": "Livelo",
+    "destination_program": "TudoAzul",
+    "bonus_percentage": 100,
+    "start_date": "2026-06-22",
+    "end_date": "2026-06-26",
+    "eligible_segment": "club members",
+    "minimum_transfer": 20000,
+    "miles_expire_in_months": 18,
+    "notes": "Mocked high-bonus campaign with a membership restriction."
+  },
+  {
+    "id": "esfera-latam-70",
+    "source_program": "Esfera",
+    "destination_program": "LATAM Pass",
+    "bonus_percentage": 70,
+    "start_date": "2026-06-18",
+    "end_date": "2026-06-30",
+    "eligible_segment": "all members",
+    "minimum_transfer": 30000,
+    "miles_expire_in_months": 24,
+    "notes": "Mocked conservative campaign with longer mileage validity."
+  }
+]
