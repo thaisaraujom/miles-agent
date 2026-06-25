@@ -63,8 +63,6 @@ financial calculations and safety screening.
 
 ## Project Structure
 
-## Project Structure
-
 ```
 miles-agent/
 ├── app/
@@ -117,7 +115,7 @@ cp .env.example .env
 Recommended local model:
 
 ```env
-MILHAS_MODEL=gemini-3.1-flash-lite
+MILES_MODEL=gemini-3.1-flash-lite
 ```
 
 or:
@@ -137,7 +135,7 @@ agents-cli playground
 You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
 
 If the playground returns `503 UNAVAILABLE`, the Gemini endpoint is under
-temporary high demand. Wait a minute and retry, or set `MILHAS_MODEL` in `.env`
+temporary high demand. Wait a minute and retry, or set `MILES_MODEL` in `.env`
 to another available Gemini model.
 
 ## Demo Prompts
@@ -200,7 +198,7 @@ The ADK coordinator keeps the MCP toolset disabled by default so
 toolset during local runs:
 
 ```bash
-export MILHAS_ENABLE_MCP_TOOLSET=true
+export MILES_ENABLE_MCP_TOOLSET=true
 ```
 
 The server exposes:

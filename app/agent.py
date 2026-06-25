@@ -42,7 +42,10 @@ os.environ.setdefault(
 
 
 MODEL = Gemini(
-    model=os.environ.get("MILHAS_MODEL", "gemini-3.1-flash-lite"),
+    model=os.environ.get(
+        "MILES_MODEL",
+        os.environ.get("MILHAS_MODEL", "gemini-3.1-flash-lite"),
+    ),
     retry_options=types.HttpRetryOptions(attempts=1),
 )
 
@@ -117,7 +120,11 @@ base_tools = [
 
 def _build_tools() -> list:
     tools = list(base_tools)
-    if os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", "").lower() == "true":
+    enable_mcp = os.environ.get(
+        "MILES_ENABLE_MCP_TOOLSET",
+        os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", ""),
+    )
+    if enable_mcp.lower() == "true":
         tools.append(
             McpToolset(
                 connection_params=StdioConnectionParams(
@@ -162,7 +169,7 @@ Core behavior:
 
 Use the specialist sub-agents for deeper promotion, redemption, or safety
 analysis. The MCP server exposes the same deterministic tools and can be
-attached locally with MILHAS_ENABLE_MCP_TOOLSET=true. It is disabled by default
+attached locally with MILES_ENABLE_MCP_TOOLSET=true. It is disabled by default
 because the current eval runner expects callable function tools.
 
 {SAFETY_RULES}
