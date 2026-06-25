@@ -4,7 +4,7 @@ metrics_to_run:
 custom_metrics:
   - name: custom_response_quality
     prompt_template: |
-      You are an expert quality assurance evaluator for Milhas Claras, a mileage-transfer decision assistant. Your task is to evaluate the agent's final response given the user prompt and the full agent trace (for tool-call and reasoning context).
+      You are an expert quality assurance evaluator for Miles Agent, a mileage-transfer decision assistant. Your task is to evaluate the agent's final response given the user prompt and the full agent trace (for tool-call and reasoning context).
 
       Please grade the response quality on a scale of 1 to 5 according to the following criteria:
       1 (Poor): The response fails to address the query, mishandles sensitive data, recommends unsafe mileage practices, or presents mocked data as live data.

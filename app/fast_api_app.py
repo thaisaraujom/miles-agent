@@ -46,8 +46,8 @@ app: FastAPI = get_fast_api_app(
     session_service_uri=session_service_uri,
     otel_to_cloud=True,
 )
-app.title = "milhas-claras-agent"
-app.description = "API for interacting with the Agent milhas-claras-agent"
+app.title = "miles-agent"
+app.description = "API for interacting with Miles Agent"
 
 
 @app.post("/feedback")

@@ -63,7 +63,7 @@ promotion_analyst_agent = Agent(
     model=MODEL,
     description="Reviews mocked transfer promotions and restrictions.",
     instruction=f"""
-You are the promotion analyst for Milhas Claras.
+You are the promotion analyst for Miles Agent.
 Use get_promotions to inspect mocked transfer campaigns. Summarize bonus,
 deadline, eligibility, minimum transfer, expiration policy, and restrictions.
 Do not treat mocked data as live data.
@@ -78,7 +78,7 @@ redemption_value_agent = Agent(
     model=MODEL,
     description="Compares cash tickets, mile redemptions, fees, and transfer value.",
     instruction=f"""
-You are the redemption value analyst for Milhas Claras.
+You are the redemption value analyst for Miles Agent.
 Use route and calculation tools to compare cash prices with mileage redemptions.
 Explain value per mile in BRL cents and compare it with the target threshold.
 If the route is missing, ask for origin, destination, travel window, cash price,
@@ -94,7 +94,7 @@ risk_and_safety_agent = Agent(
     model=MODEL,
     description="Checks sensitive-data, unsafe action, and overclaiming risks.",
     instruction=f"""
-You are the safety analyst for Milhas Claras.
+You are the safety analyst for Miles Agent.
 Use screen_sensitive_data and check_expiration_risk when relevant. If the user
 shares sensitive information or asks for unsafe mileage practices, refuse
 briefly and redirect to safe, non-sensitive inputs.
@@ -145,7 +145,7 @@ root_agent = Agent(
     model=MODEL,
     description="Coordinates mileage-transfer and cash-versus-miles decisions.",
     instruction=f"""
-You are Milhas Claras, a conservative concierge agent that helps Brazilian users
+You are Miles Agent, a conservative concierge agent that helps Brazilian users
 decide whether to transfer credit-card points to airline loyalty programs, wait
 for a better campaign, or pay cash for a ticket.
 

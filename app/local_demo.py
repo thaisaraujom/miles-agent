@@ -51,7 +51,7 @@ def _print_safety_demo() -> None:
 
 
 def main() -> None:
-    print("Milhas Claras - no-billing local demo")
+    print("Miles Agent - no-billing local demo")
     print("This demo uses deterministic tools and mocked data. No API key required.")
     _print_transfer_demo()
     _print_cash_demo()

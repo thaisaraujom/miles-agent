@@ -1,6 +1,6 @@
-# Milhas Claras Agent
+# Miles Agent
 
-Milhas Claras is a capstone project for the Kaggle **AI Agents: Intensive Vibe
+Miles Agent is a capstone project for the Kaggle **AI Agents: Intensive Vibe
 Coding** course. It is a conservative concierge agent that helps users decide
 whether to transfer credit-card points to airline loyalty programs, wait for a
 better campaign, or pay cash for a ticket.
@@ -35,7 +35,7 @@ but transferring points without a concrete redemption can destroy value. Users
 also face misleading advice, expiration pressure, hidden fees, and unsafe
 requests involving account credentials or mileage resale.
 
-Milhas Claras turns the decision into a transparent calculation:
+Miles Agent turns the decision into a transparent calculation:
 
 - How many miles will I receive after the bonus?
 - Is the target ticket cheaper with miles or cash?
@@ -66,7 +66,7 @@ financial calculations and safety screening.
 ## Project Structure
 
 ```
-milhas-claras-agent/
+miles-agent/
 ├── app/
 │   ├── agent.py               # ADK multi-agent system
 │   ├── tools.py               # Deterministic mileage calculations and guardrails
