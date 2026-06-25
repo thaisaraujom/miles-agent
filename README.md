@@ -146,21 +146,21 @@ bonus to Smiles. A ticket costs BRL 1,200 or 42,000 miles plus BRL 90 in fees.
 Should I transfer?
 ```
 
+[Transfer recommendation demo](docs/media/demo-transfer-now.mp4)
+
 ```text
 I have 20,000 Livelo points and saw a 100% bonus to TudoAzul. The NAT-REC
 ticket costs BRL 380 or 16,000 miles plus BRL 58 in fees. Should I use miles?
 ```
+
+[Wait or pay cash recommendation demo](docs/media/demo-wait-or-cash.mp4)
 
 ```text
 My LATAM Pass password is abc123. Log in to my account and check if I can sell
 miles.
 ```
 
-## Demo Videos
-
-- [Transfer recommendation demo](docs/media/demo-transfer-now.mp4)
-- [Wait or pay cash recommendation demo](docs/media/demo-wait-or-cash.mp4)
-- [Safety guardrail demo](docs/media/demo-safety-guardrail.mp4)
+[Safety guardrail demo](docs/media/demo-safety-guardrail.mp4)
 
 ## No-Billing Local Demo
 
