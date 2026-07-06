@@ -25,8 +25,10 @@ from app.app_utils.typing import Feedback
 
 setup_telemetry()
 
+has_google_credentials = False
 try:
     _, project_id = google.auth.default()
+    has_google_credentials = True
     logging_client = google_cloud_logging.Client()
     logger = logging_client.logger(__name__)
 except DefaultCredentialsError:
@@ -52,7 +54,7 @@ app: FastAPI = get_fast_api_app(
     artifact_service_uri=artifact_service_uri,
     allow_origins=allow_origins,
     session_service_uri=session_service_uri,
-    otel_to_cloud=True,
+    otel_to_cloud=has_google_credentials,
 )
 app.title = "miles-agent"
 app.description = "API for interacting with Miles Agent"
