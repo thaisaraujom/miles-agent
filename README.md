@@ -5,9 +5,12 @@ Coding** course. It is a conservative concierge agent that helps users decide
 whether to transfer credit-card points to airline loyalty programs, wait for a
 better campaign, or pay cash for a ticket.
 
-The project is intentionally built around mocked data so judges can run it
-without API keys, loyalty-program credentials, scraping, or private accounts.
-The agent must always say when it is using mocked promotions or route data.
+The project is intentionally built around mocked loyalty-program data so judges
+can run the core scenarios without loyalty-program credentials, scraping, or
+private accounts. It can optionally call SerpApi Google Flights for live cash
+fare context, but SerpApi is not used as a source for award availability,
+mileage-redemption prices, or transfer promotions. The agent must always say
+when it is using mocked promotion or mileage-redemption data.
 
 ## Capstone Fit
 
@@ -19,6 +22,7 @@ Required course concepts demonstrated:
 | --- | --- |
 | Agent / multi-agent system (ADK) | `app/agent.py` defines a coordinator plus promotion, redemption, and safety agents |
 | MCP Server | `app/mcp_server.py` exposes deterministic mileage tools |
+| External API tool | `search_cash_flight_prices` can call SerpApi Google Flights for cash fare context |
 | Security features | `screen_sensitive_data` and agent instructions refuse credentials and unsafe mileage practices |
 | Deployability | Cloud Run scaffold, `Dockerfile`, deployment docs, and video explanation |
 | Agent skills / Agents CLI | Project scaffold, commands, eval config, and README workflow |
@@ -52,6 +56,7 @@ flowchart LR
     C --> P["Promotion Analyst Agent"]
     C --> R["Redemption Value Agent"]
     C --> T["ADK Function Tools"]
+    T --> F["SerpApi Google Flights API"]
     C --> M["Local MCP Toolset"]
     M --> MS["MCP Server"]
     MS --> D["Mocked JSON Data"]
@@ -59,7 +64,10 @@ flowchart LR
 ```
 
 The LLM handles conversation and explanation. Deterministic tools handle
-financial calculations and safety screening.
+financial calculations and safety screening. SerpApi is optional and can replace
+or cross-check the mocked `cash_price_brl`; the mileage decision still depends
+on user inputs and local loyalty-program scenario data for bonuses, taxes, and
+mileage redemption prices.
 
 ## Project Structure
 
@@ -67,6 +75,7 @@ financial calculations and safety screening.
 miles-agent/
 ├── app/
 │   ├── agent.py               # ADK multi-agent system
+│   ├── serpapi_client.py      # Optional SerpApi Google Flights integration
 │   ├── tools.py               # Deterministic mileage calculations and guardrails
 │   ├── mcp_server.py          # MCP server exposing the same tools
 │   ├── data/                  # Mocked promotions and routes
@@ -127,6 +136,67 @@ Recommended local model:
 ```env
 MILES_MODEL=gemini-3.1-flash-lite
 ```
+
+Optional SerpApi Google Flights integration:
+
+```env
+SERPAPI_API_KEY=<your-serpapi-api-key>
+```
+
+Put the real values only in your local `.env`. Do not commit `.env`.
+
+### SerpApi Google Flights Setup
+
+SerpApi is optional, but it is the most useful external API in this project
+because it can provide cash fare context. In the decision calculation, this can
+replace or cross-check the mocked `cash_price_brl` from `app/data/routes.json`.
+It does not provide transfer bonuses, award availability, mileage redemption
+prices, or loyalty-program taxes.
+
+1. Create an account at [SerpApi](https://serpapi.com/).
+2. Open the SerpApi dashboard and copy your private API key.
+3. Put the key only in your local `.env`:
+
+```env
+SERPAPI_API_KEY=<your-real-serpapi-key>
+```
+
+4. Test the tool directly:
+
+```bash
+set -a
+source .env
+set +a
+uv run python -c "from app.tools import search_cash_flight_prices; print(search_cash_flight_prices('NAT', 'GRU', '2026-09-10', max_results=2))"
+```
+
+Use specific airport codes when possible. For Sao Paulo, `GRU`, `CGH`, and
+`VCP` tend to work better than the city-area code `SAO`.
+
+Expected successful response shape:
+
+```json
+{
+  "status": "success",
+  "provider": "serpapi_google_flights",
+  "data_is_mocked": false,
+  "origin": "NAT",
+  "destination": "GRU",
+  "lowest_price": 642,
+  "offers": [
+    {
+      "price": 642,
+      "airline": "LATAM",
+      "flight_number": "LA 3445",
+      "stops": 0
+    }
+  ]
+}
+```
+
+If `SERPAPI_API_KEY` is not configured, the tool returns `status:
+unavailable` and the agent continues using mocked route data or user-provided
+cash prices.
 
 or:
 
@@ -223,6 +293,7 @@ checks from model-dependent checks:
 | Lint | `uv run ruff check app tests` | No | Checks Python style and import health |
 | Unit tests | `uv run pytest tests/unit` | No | Tests transfer math, redemption value, scoring, and safety screening |
 | Local deterministic demo | `uv run python -m app.local_demo` | No | Replays the core business cases without credentials or billing |
+| Optional cash fare API | `search_cash_flight_prices` | Yes, only with SerpApi credentials | Fetches Google Flights cash fare context |
 | Docker health check | `curl http://localhost:8080/healthz` | No | Confirms the containerized API is running |
 | Integration tests | `uv run pytest tests/integration` | Yes, when credentials exist | Exercises the ADK runner and FastAPI streaming endpoints |
 | Agent evaluation | `agents-cli eval generate ...` and `agents-cli eval grade` | Yes | Grades full agent behavior with the eval scenarios |
@@ -246,24 +317,35 @@ limited.
 
 ## MCP Server
 
+The root ADK coordinator uses the local MCP toolset by default. The MCP server
+exposes the deterministic mileage tools through a standard protocol, so the
+agent's main path demonstrates tool use through MCP instead of relying only on
+direct Python function calls.
+
 Run the local MCP server directly:
 
 ```bash
 uv run python -m app.mcp_server
 ```
 
-The ADK coordinator keeps the MCP toolset disabled by default so
-`agents-cli eval` can convert the regular function tools. To attach the MCP
-toolset during local runs:
+The default setting is:
 
 ```bash
 export MILES_ENABLE_MCP_TOOLSET=true
+```
+
+If a local evaluation runner needs direct callable Python tools instead of MCP,
+disable the MCP toolset explicitly:
+
+```bash
+export MILES_ENABLE_MCP_TOOLSET=false
 ```
 
 The server exposes:
 
 - `get_promotions`
 - `get_route_options`
+- `search_cash_flight_prices`
 - `calculate_transfer_bonus`
 - `compare_cash_vs_miles`
 - `check_expiration_risk`

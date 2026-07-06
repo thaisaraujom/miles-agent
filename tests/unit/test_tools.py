@@ -3,6 +3,7 @@ from app.tools import (
     compare_cash_vs_miles,
     score_transfer_decision,
     screen_sensitive_data,
+    search_cash_flight_prices,
 )
 
 
@@ -47,3 +48,30 @@ def test_screen_sensitive_data_blocks_credentials() -> None:
     assert result["is_safe"] is False
     assert "password" in result["sensitive_matches"]
     assert "sell miles" in result["unsafe_matches"]
+
+
+def test_search_cash_flight_prices_is_optional_without_api_key(
+    monkeypatch,
+) -> None:
+    monkeypatch.delenv("SERPAPI_API_KEY", raising=False)
+
+    result = search_cash_flight_prices(
+        origin="NAT",
+        destination="SAO",
+        outbound_date="2026-09-10",
+    )
+
+    assert result["status"] == "unavailable"
+    assert result["provider"] == "serpapi_google_flights"
+
+
+def test_search_cash_flight_prices_validates_max_results() -> None:
+    result = search_cash_flight_prices(
+        origin="NAT",
+        destination="SAO",
+        outbound_date="2026-09-10",
+        max_results=0,
+    )
+
+    assert result["status"] == "error"
+    assert result["message"] == "max_results must be positive"

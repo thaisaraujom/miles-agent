@@ -30,6 +30,7 @@ from app.tools import (
     compare_cash_vs_miles,
     get_promotions,
     get_route_options,
+    search_cash_flight_prices,
     score_transfer_decision,
     screen_sensitive_data,
 )
@@ -82,14 +83,21 @@ redemption_value_agent = Agent(
     description="Compares cash tickets, mile redemptions, fees, and transfer value.",
     instruction=f"""
 You are the redemption value analyst for Miles Agent.
-Use route and calculation tools to compare cash prices with mileage redemptions.
+Use live cash flight price search when origin, destination, and outbound date are
+available. Use route and calculation tools to compare cash prices with mileage
+redemptions.
 Explain value per mile in BRL cents and compare it with the target threshold.
 If the route is missing, ask for origin, destination, travel window, cash price,
 miles required, and taxes.
 
 {SAFETY_RULES}
 """,
-    tools=[get_route_options, compare_cash_vs_miles, score_transfer_decision],
+    tools=[
+        search_cash_flight_prices,
+        get_route_options,
+        compare_cash_vs_miles,
+        score_transfer_decision,
+    ],
 )
 
 risk_and_safety_agent = Agent(
@@ -109,6 +117,7 @@ briefly and redirect to safe, non-sensitive inputs.
 
 base_tools = [
     screen_sensitive_data,
+    search_cash_flight_prices,
     get_promotions,
     get_route_options,
     calculate_transfer_bonus,
@@ -119,13 +128,12 @@ base_tools = [
 
 
 def _build_tools() -> list:
-    tools = list(base_tools)
     enable_mcp = os.environ.get(
         "MILES_ENABLE_MCP_TOOLSET",
-        os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", ""),
+        os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", "true"),
     )
-    if enable_mcp.lower() == "true":
-        tools.append(
+    if enable_mcp.lower() != "false":
+        return [
             McpToolset(
                 connection_params=StdioConnectionParams(
                     server_params=StdioServerParameters(
@@ -136,6 +144,7 @@ def _build_tools() -> list:
                 tool_filter=[
                     "get_promotions",
                     "get_route_options",
+                    "search_cash_flight_prices",
                     "calculate_transfer_bonus",
                     "compare_cash_vs_miles",
                     "check_expiration_risk",
@@ -143,8 +152,8 @@ def _build_tools() -> list:
                     "screen_sensitive_data",
                 ],
             )
-        )
-    return tools
+        ]
+    return list(base_tools)
 
 
 root_agent = Agent(
@@ -166,11 +175,14 @@ Core behavior:
    not transfer yet.
 5. Explain the calculation in plain language and list assumptions.
 6. Make clear that current promotion and route data are mocked for this demo.
+7. Use SerpApi/Google Flights only for cash fare context. Never treat it as
+   mileage availability, redemption price, or promotion data.
 
 Use the specialist sub-agents for deeper promotion, redemption, or safety
-analysis. The MCP server exposes the same deterministic tools and can be
-attached locally with MILES_ENABLE_MCP_TOOLSET=true. It is disabled by default
-because the current eval runner expects callable function tools.
+analysis. The root coordinator uses the MCP server by default to access the
+same deterministic tools through a standard tool protocol. Set
+MILES_ENABLE_MCP_TOOLSET=false only when a local evaluation runner needs direct
+callable function tools.
 
 {SAFETY_RULES}
 """,

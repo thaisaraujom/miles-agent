@@ -3,6 +3,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from app.serpapi_client import search_google_flights
+
 DATA_DIR = Path(__file__).parent / "data"
 TARGET_VALUE_CENTS_PER_MILE = 2.2
 SENSITIVE_PATTERNS = {
@@ -68,6 +70,29 @@ def get_route_options(
         "data_is_mocked": True,
         "routes": routes,
     }
+
+
+def search_cash_flight_prices(
+    origin: str,
+    destination: str,
+    outbound_date: str,
+    adults: int = 1,
+    currency: str = "BRL",
+    max_results: int = 5,
+) -> dict[str, Any]:
+    """Return cash flight prices from SerpApi Google Flights when configured."""
+    if adults <= 0:
+        return {"status": "error", "message": "adults must be positive"}
+    if max_results <= 0:
+        return {"status": "error", "message": "max_results must be positive"}
+    return search_google_flights(
+        origin=origin,
+        destination=destination,
+        outbound_date=outbound_date,
+        adults=adults,
+        currency=currency,
+        max_results=max_results,
+    )
 
 
 def calculate_transfer_bonus(points: int, bonus_percentage: float) -> dict[str, Any]:
