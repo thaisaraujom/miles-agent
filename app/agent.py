@@ -62,6 +62,72 @@ Safety rules:
 """
 
 
+DIRECT_TOOLS_BY_NAME = {
+    "screen_sensitive_data": screen_sensitive_data,
+    "search_cash_flight_prices": search_cash_flight_prices,
+    "get_promotions": get_promotions,
+    "get_route_options": get_route_options,
+    "calculate_transfer_bonus": calculate_transfer_bonus,
+    "compare_cash_vs_miles": compare_cash_vs_miles,
+    "check_expiration_risk": check_expiration_risk,
+    "score_transfer_decision": score_transfer_decision,
+}
+
+PROMOTION_TOOL_NAMES = [
+    "get_promotions",
+    "calculate_transfer_bonus",
+]
+
+REDEMPTION_TOOL_NAMES = [
+    "search_cash_flight_prices",
+    "get_route_options",
+    "compare_cash_vs_miles",
+    "score_transfer_decision",
+]
+
+RISK_TOOL_NAMES = [
+    "screen_sensitive_data",
+    "check_expiration_risk",
+]
+
+ROOT_TOOL_NAMES = [
+    "screen_sensitive_data",
+    "search_cash_flight_prices",
+    "get_promotions",
+    "get_route_options",
+    "calculate_transfer_bonus",
+    "compare_cash_vs_miles",
+    "check_expiration_risk",
+    "score_transfer_decision",
+]
+
+
+def _mcp_enabled() -> bool:
+    enable_mcp = os.environ.get(
+        "MILES_ENABLE_MCP_TOOLSET",
+        os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", "true"),
+    )
+    return enable_mcp.lower() != "false"
+
+
+def _mcp_toolset(tool_names: list[str]) -> McpToolset:
+    return McpToolset(
+        connection_params=StdioConnectionParams(
+            server_params=StdioServerParameters(
+                command=sys.executable,
+                args=["-m", "app.mcp_server"],
+            ),
+        ),
+        tool_filter=tool_names,
+    )
+
+
+def _tools_for(tool_names: list[str]) -> list:
+    if _mcp_enabled():
+        return [_mcp_toolset(tool_names)]
+    return [DIRECT_TOOLS_BY_NAME[name] for name in tool_names]
+
+
 promotion_analyst_agent = Agent(
     name="promotion_analyst_agent",
     model=MODEL,
@@ -74,7 +140,7 @@ Do not treat mocked data as live data.
 
 {SAFETY_RULES}
 """,
-    tools=[get_promotions, calculate_transfer_bonus],
+    tools=_tools_for(PROMOTION_TOOL_NAMES),
 )
 
 redemption_value_agent = Agent(
@@ -92,12 +158,7 @@ miles required, and taxes.
 
 {SAFETY_RULES}
 """,
-    tools=[
-        search_cash_flight_prices,
-        get_route_options,
-        compare_cash_vs_miles,
-        score_transfer_decision,
-    ],
+    tools=_tools_for(REDEMPTION_TOOL_NAMES),
 )
 
 risk_and_safety_agent = Agent(
@@ -112,49 +173,8 @@ briefly and redirect to safe, non-sensitive inputs.
 
 {SAFETY_RULES}
 """,
-    tools=[screen_sensitive_data, check_expiration_risk],
+    tools=_tools_for(RISK_TOOL_NAMES),
 )
-
-base_tools = [
-    screen_sensitive_data,
-    search_cash_flight_prices,
-    get_promotions,
-    get_route_options,
-    calculate_transfer_bonus,
-    compare_cash_vs_miles,
-    check_expiration_risk,
-    score_transfer_decision,
-]
-
-
-def _build_tools() -> list:
-    enable_mcp = os.environ.get(
-        "MILES_ENABLE_MCP_TOOLSET",
-        os.environ.get("MILHAS_ENABLE_MCP_TOOLSET", "true"),
-    )
-    if enable_mcp.lower() != "false":
-        return [
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command=sys.executable,
-                        args=["-m", "app.mcp_server"],
-                    ),
-                ),
-                tool_filter=[
-                    "get_promotions",
-                    "get_route_options",
-                    "search_cash_flight_prices",
-                    "calculate_transfer_bonus",
-                    "compare_cash_vs_miles",
-                    "check_expiration_risk",
-                    "score_transfer_decision",
-                    "screen_sensitive_data",
-                ],
-            )
-        ]
-    return list(base_tools)
-
 
 root_agent = Agent(
     name="miles_agent_coordinator",
@@ -179,14 +199,14 @@ Core behavior:
    mileage availability, redemption price, or promotion data.
 
 Use the specialist sub-agents for deeper promotion, redemption, or safety
-analysis. The root coordinator uses the MCP server by default to access the
-same deterministic tools through a standard tool protocol. Set
+analysis. The coordinator and the specialist agents use the MCP server by
+default to access deterministic tools through a standard tool protocol. Set
 MILES_ENABLE_MCP_TOOLSET=false only when a local evaluation runner needs direct
 callable function tools.
 
 {SAFETY_RULES}
 """,
-    tools=_build_tools(),
+    tools=_tools_for(ROOT_TOOL_NAMES),
     sub_agents=[
         promotion_analyst_agent,
         redemption_value_agent,

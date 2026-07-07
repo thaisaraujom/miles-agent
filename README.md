@@ -21,16 +21,16 @@ Required course concepts demonstrated:
 | Concept | Where it appears |
 | --- | --- |
 | Agent / multi-agent system (ADK) | `app/agent.py` defines a coordinator plus promotion, redemption, and safety agents |
-| MCP Server | `app/mcp_server.py` exposes deterministic mileage tools |
+| MCP Server | `app/mcp_server.py` exposes data, API, safety, and calculation tools through MCP |
 | External API tool | `search_cash_flight_prices` can call SerpApi Google Flights for cash fare context |
 | Security features | `screen_sensitive_data` and agent instructions refuse credentials and unsafe mileage practices |
-| Deployability | Cloud Run scaffold, `Dockerfile`, deployment docs, and video explanation |
+| Deployability | `Dockerfile`, local Docker deployment docs, FastAPI health check, and video explanation |
 | Agent skills / Agents CLI | Project scaffold, commands, eval config, and README workflow |
 
 Antigravity is planned for the final video demonstration rather than as a code
-dependency. A live Cloud Run URL is optional for this capstone; when billing is
-not available, the public project link can be the repository with reproducible
-local setup instructions.
+dependency. A live hosted URL is optional for this capstone; when cloud billing
+is not available, the public project link can be the repository with
+reproducible local Docker setup instructions.
 
 ## Problem
 
@@ -55,19 +55,23 @@ flowchart LR
     C --> S["Risk and Safety Agent"]
     C --> P["Promotion Analyst Agent"]
     C --> R["Redemption Value Agent"]
-    C --> T["ADK Function Tools"]
-    T --> F["SerpApi Google Flights API"]
     C --> M["Local MCP Toolset"]
+    S --> M
+    P --> M
+    R --> M
     M --> MS["MCP Server"]
-    MS --> D["Mocked JSON Data"]
-    T --> D
+    MS --> T["Python Tools"]
+    T --> F["SerpApi Google Flights API"]
+    T --> D["Mocked JSON Data"]
 ```
 
 The LLM handles conversation and explanation. Deterministic tools handle
 financial calculations and safety screening. SerpApi is optional and can replace
 or cross-check the mocked `cash_price_brl`; the mileage decision still depends
 on user inputs and local loyalty-program scenario data for bonuses, taxes, and
-mileage redemption prices.
+mileage redemption prices. The coordinator and specialist agents use
+`McpToolset` by default, so tool calls go through `app/mcp_server.py` before
+reaching the Python functions in `app/tools.py`.
 
 ## Project Structure
 
@@ -93,8 +97,8 @@ miles-agent/
 Before you begin, ensure you have:
 - **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
 - **agents-cli**: Agents CLI - Install with `uv tool install google-agents-cli`
-- **Docker**: Optional, for containerized local testing
-- **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
+- **Docker**: Optional, for local container deployment and health-check testing
+- **Google Cloud SDK**: Optional, only if using Google Cloud credentials or cloud deployment - [Install](https://cloud.google.com/sdk/docs/install)
 
 ## Quick Start
 
@@ -112,12 +116,11 @@ agents-cli install
 
 ### Credentials
 
-For local LLM execution, configure one of the following credential paths:
+For local LLM execution, the simplest path is a Gemini API key from Google AI
+Studio:
 
 - Create or view a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
 - Read Google's official [Gemini API key guide](https://ai.google.dev/gemini-api/docs/api-key).
-- Create or find a Google Cloud project in the [Google Cloud Console](https://console.cloud.google.com/projectcreate) or follow the official [project creation docs](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-- If using Google Cloud credentials instead of an API key, follow the official [Application Default Credentials setup](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
 
 Do not commit `.env`, API keys, passwords, or loyalty account credentials.
 
@@ -144,6 +147,17 @@ SERPAPI_API_KEY=<your-serpapi-api-key>
 ```
 
 Put the real values only in your local `.env`. Do not commit `.env`.
+
+Google Cloud credentials are optional. If using Google Cloud credentials instead
+of an AI Studio API key, create or find a Google Cloud project in the
+[Google Cloud Console](https://console.cloud.google.com/projectcreate) and
+follow the official [Application Default Credentials setup](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment):
+
+```bash
+gcloud auth login --update-adc
+gcloud config set project <your-project-id>
+export GOOGLE_CLOUD_PROJECT=<your-project-id>
+```
 
 ### SerpApi Google Flights Setup
 
@@ -198,14 +212,6 @@ If `SERPAPI_API_KEY` is not configured, the tool returns `status:
 unavailable` and the agent continues using mocked route data or user-provided
 cash prices.
 
-or:
-
-```bash
-gcloud auth login --update-adc
-gcloud config set project <your-project-id>
-export GOOGLE_CLOUD_PROJECT=<your-project-id>
-```
-
 Test the agent with a local web server:
 
 ```bash
@@ -218,15 +224,15 @@ If the playground returns `503 UNAVAILABLE`, the Gemini endpoint is under
 temporary high demand. Wait a minute and retry, or set `MILES_MODEL` in `.env`
 to another available Gemini model.
 
-## Docker Local Test
+## Local Docker Deployment
 
-Build the container:
+Build the container image:
 
 ```bash
 docker build -t miles-agent .
 ```
 
-Run the API locally:
+Run the API locally as a container:
 
 ```bash
 docker run --rm --env-file .env -p 8080:8080 miles-agent
@@ -313,14 +319,15 @@ limited.
 | `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
 | `uv run pytest tests/unit` | Run deterministic unit tests without model calls                                      |
 | `uv run pytest tests/integration` | Run model-dependent integration tests after credentials are configured                |
-| `agents-cli deploy`  | Deploy agent to Cloud Run                                                                   |
+| `docker build -t miles-agent .` | Build the local deployment image                                                |
+| `docker run --env-file .env -p 8080:8080 miles-agent` | Run the containerized FastAPI app locally                   |
 
 ## MCP Server
 
-The root ADK coordinator uses the local MCP toolset by default. The MCP server
-exposes the deterministic mileage tools through a standard protocol, so the
-agent's main path demonstrates tool use through MCP instead of relying only on
-direct Python function calls.
+The ADK coordinator and specialist agents use the local MCP toolset by default.
+The MCP server exposes data, API, safety, and calculation tools through a
+standard protocol, so the main path demonstrates tool use through MCP instead of
+relying only on direct Python function calls.
 
 Run the local MCP server directly:
 
@@ -356,8 +363,8 @@ The server exposes:
 
 | Command | What It Does |
 |---------|--------------|
-| `agents-cli scaffold enhance` | Add CI/CD pipelines and Terraform infrastructure |
-| `agents-cli infra cicd` | One-command setup of entire CI/CD pipeline + infrastructure |
+| `agents-cli scaffold enhance` | Optionally add CI/CD pipelines and Terraform infrastructure |
+| `agents-cli infra cicd` | Optionally set up CI/CD pipeline and infrastructure |
 | `agents-cli scaffold upgrade` | Auto-upgrade to latest version while preserving customizations |
 
 ---
@@ -401,29 +408,37 @@ enabled for the project.
 
 ## Deployment
 
+The primary deployment path for this submission is local Docker deployment. It
+packages the FastAPI/ADK application, dependencies, MCP server code, mocked data,
+and runtime command into a reproducible container:
+
 ```bash
-gcloud config set project <your-project-id>
-agents-cli deploy
+docker build -t miles-agent .
+docker run --env-file .env -p 8080:8080 miles-agent
+curl http://localhost:8080/healthz
 ```
 
-To add CI/CD and Terraform, run `agents-cli scaffold enhance`.
-To set up your production infrastructure, run `agents-cli infra cicd`.
+Cloud deployment can be added later with `agents-cli scaffold enhance` and
+`agents-cli deploy` when Google Cloud billing and project permissions are
+available.
 
 Do not commit API keys, loyalty credentials, `.env` secrets, or user account
 data. The capstone demo should work with mocked public data.
 
 ### No-Billing Submission Path
 
-If Cloud Run billing is unavailable, submit:
+If cloud billing is unavailable, submit:
 
 - the public repository as the project link
 - a README with local setup and demo commands
-- a video showing the local demo, ADK code, MCP server, guardrails, and Cloud Run
-  scaffold as deployability evidence
+- a video showing the local demo, Docker deployment, ADK code, MCP server, and
+  guardrails as deployability evidence
 
 This stays within the capstone requirements because deployment is not mandatory;
 deployability can be demonstrated in the video and documentation.
 
 ## Observability
 
-Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
+Telemetry can export to Cloud Trace, BigQuery, and Cloud Logging when Google
+Cloud credentials and project configuration are available. Local health checks
+and deterministic demos do not require cloud telemetry.
