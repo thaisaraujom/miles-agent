@@ -12,6 +12,18 @@ fare context, but SerpApi is not used as a source for award availability,
 mileage-redemption prices, or transfer promotions. The agent must always say
 when it is using mocked promotion or mileage-redemption data.
 
+## Presentation
+
+The project presentation is available at
+[`docs/presentation/miles_agent_apresentacao.pdf`](docs/presentation/miles_agent_apresentacao.pdf).
+
+## Team
+
+- [Alice Freire](https://github.com/alicefvictorino) (`@alicefvictorino`)
+- [Erick Vinicius](https://github.com/erickjustino) (`@erickjustino`)
+- [Maria Eduarda Luz](https://github.com/marialluz) (`@marialluz`)
+- [Thaís Araújo](https://github.com/thaisaraujom) (`@thaisaraujom`)
+
 ## Capstone Fit
 
 Target track: **Concierge Agents**.
@@ -88,6 +100,9 @@ miles-agent/
 │   ├── eval/                  # Eval config and seed scenarios
 │   ├── integration/
 │   └── unit/
+├── docs/
+│   ├── media/                 # Demo GIFs and videos
+│   └── presentation/          # Presentation PDF
 ├── AGENTS.md                  # Coding-agent development guide
 └── pyproject.toml
 ```
