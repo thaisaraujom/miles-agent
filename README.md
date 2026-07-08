@@ -61,22 +61,6 @@ Miles Agent turns the decision into a transparent calculation:
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    U["User"] --> C["Coordinator Agent"]
-    C --> S["Risk and Safety Agent"]
-    C --> P["Promotion Analyst Agent"]
-    C --> R["Redemption Value Agent"]
-    C --> M["Local MCP Toolset"]
-    S --> M
-    P --> M
-    R --> M
-    M --> MS["MCP Server"]
-    MS --> T["Python Tools"]
-    T --> F["SerpApi Google Flights API"]
-    T --> D["Mocked JSON Data"]
-```
-
 The LLM handles conversation and explanation. Deterministic tools handle
 financial calculations and safety screening. SerpApi is optional and can replace
 or cross-check the mocked `cash_price_brl`; the mileage decision still depends
