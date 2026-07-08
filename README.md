@@ -431,9 +431,3 @@ If cloud billing is unavailable, submit:
 
 This stays within the capstone requirements because deployment is not mandatory;
 deployability can be demonstrated in the video and documentation.
-
-## Observability
-
-Telemetry can export to Cloud Trace, BigQuery, and Cloud Logging when Google
-Cloud credentials and project configuration are available. Local health checks
-and deterministic demos do not require cloud telemetry.
