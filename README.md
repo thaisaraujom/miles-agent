@@ -1,16 +1,17 @@
 # Miles Agent
 
-Miles Agent is a capstone project for the Kaggle **AI Agents: Intensive Vibe
-Coding** course. It is a conservative concierge agent that helps users decide
-whether to transfer credit-card points to airline loyalty programs, wait for a
-better campaign, or pay cash for a ticket.
+Miles Agent is a project developed for the PPGEEC2327 - **Special Topics in
+Intelligent Information Processing** course, based on the Kaggle **AI Agents:
+Intensive Vibe Coding** capstone format. It helps users decide whether to
+transfer credit-card points to airline loyalty programs, wait for a better
+campaign, or pay cash for a ticket.
 
-The project is intentionally built around mocked loyalty-program data so judges
-can run the core scenarios without loyalty-program credentials, scraping, or
-private accounts. It can optionally call SerpApi Google Flights for live cash
-fare context, but SerpApi is not used as a source for award availability,
-mileage-redemption prices, or transfer promotions. The agent must always say
-when it is using mocked promotion or mileage-redemption data.
+The project is intentionally built around mocked loyalty-program data so
+reviewers can run the core scenarios without loyalty-program credentials,
+scraping, or private accounts. It can optionally call SerpApi Google Flights for
+live cash fare context, but SerpApi is not used as a source for award
+availability, mileage-redemption prices, or transfer promotions. The agent must
+always say when it is using mocked promotion or mileage-redemption data.
 
 ## Presentation
 
@@ -38,11 +39,6 @@ Required course concepts demonstrated:
 | Security features | `screen_sensitive_data` and agent instructions refuse credentials and unsafe mileage practices |
 | Deployability | `Dockerfile`, local Docker deployment docs, FastAPI health check, and video explanation |
 | Agent skills / Agents CLI | Project scaffold, commands, eval config, and README workflow |
-
-Antigravity is planned for the final video demonstration rather than as a code
-dependency. A live hosted URL is optional for this capstone; when cloud billing
-is not available, the public project link can be the repository with
-reproducible local Docker setup instructions.
 
 ## Problem
 
